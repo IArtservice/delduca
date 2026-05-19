@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>DelDuca Weddings | Preventivo Matrimonio Premium</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#f5efe9; font-family:'Inter',sans-serif; color:#2c241f; min-height:100vh; }
+    .intro-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:#fefaf5; z-index:10000; display:flex; align-items:center; justify-content:center; transition:opacity 0.8s cubic-bezier(0.2,0.9,0.4,1); pointer-events:none; }
+    .intro-overlay.fade-out { opacity:0; visibility:hidden; }
+    .intro-logo { width:300px; height:auto; filter:drop-shadow(0 20px 30px rgba(0,0,0,0.08)); animation:introRise 0.7s ease-out; }
+    @keyframes introRise { 0%{opacity:0;transform:translateY(20px) scale(0.96);} 100%{opacity:1;transform:translateY(0) scale(1);} }
+    .logo-fixed { position:fixed; top:28px; left:28px; width:100px; z-index:1000; filter:drop-shadow(0 4px 12px rgba(0,0,0,0.1)); opacity:0; transform:scale(0.92); transition:opacity 0.5s ease 0.3s,transform 0.4s ease 0.3s; pointer-events:none; cursor:pointer; }
+    .logo-fixed.visible { opacity:1; transform:scale(1); pointer-events:auto; }
+    .container { max-width:1400px; margin:0 auto; padding:2rem 1.8rem; opacity:0; transform:translateY(18px); transition:opacity 0.6s ease 0.4s,transform 0.6s ease 0.4s; }
+    .container.visible { opacity:1; transform:translateY(0); }
+    .wedding-card { background:#ffffff; border-radius:2rem; box-shadow:0 30px 50px -20px rgba(0,0,0,0.2),0 0 0 1px rgba(224,196,158,0.2); overflow:hidden; }
+    .hero { background:linear-gradient(135deg,#fffaf5,#fff5ec); padding:2.5rem 2rem; text-align:center; border-bottom:1px solid #f0e0cf; }
+    .hero h1 { font-family:'Cormorant Garamond',serif; font-size:3rem; font-weight:700; color:#b45a2e; letter-spacing:-0.2px; }
+    .hero p { font-size:1rem; color:#8e6a4d; margin-top:0.5rem; font-weight:500; }
+    .progress-area { padding:1.8rem 2rem 0.5rem; }
+    .progress-track { background:#efe3d8; border-radius:40px; height:6px; }
+    .progress-fill { background:#c47a44; width:0%; height:100%; border-radius:40px; transition:width 0.4s ease; }
+    .step-counter { display:flex; justify-content:space-between; margin-top:0.8rem; font-weight:500; color:#a77b58; font-size:0.85rem; }
+    .step-content { padding:2rem 2rem 1rem; min-height:520px; }
+    .category-title { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:700; color:#3a2a1f; display:flex; align-items:baseline; flex-wrap:wrap; gap:1rem; margin-bottom:0.3rem; }
+    .badge-cat { background:#f4e8df; font-size:0.7rem; font-weight:600; padding:0.2rem 1rem; border-radius:60px; color:#b45a2e; letter-spacing:0.3px; }
+    .sub { color:#b38b6b; margin-bottom:2rem; border-left:3px solid #e9cfb9; padding-left:1rem; font-size:0.9rem; }
+    .options-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.5rem; margin:2rem 0 1.5rem; }
+    .option-card { background:#fffdfb; border-radius:1.25rem; padding:1.3rem; border:1px solid #ede0d2; transition:all 0.3s cubic-bezier(0.2,0.9,0.4,1.1); cursor:pointer; box-shadow:0 6px 12px -8px rgba(0,0,0,0.05); animation:cardReveal 0.45s backwards; animation-delay:calc(0.03s * var(--order,0)); }
+    @keyframes cardReveal { from{opacity:0;transform:translateY(14px) scale(0.97);} to{opacity:1;transform:translateY(0) scale(1);} }
+    .option-card:hover { transform:translateY(-5px); border-color:#cfaa83; box-shadow:0 18px 28px -12px rgba(0,0,0,0.12); }
+    .option-card.selected { border:2px solid #c47a44; background:#fffaf4; box-shadow:0 12px 20px -12px rgba(196,122,68,0.25); }
+    .option-name { font-weight:700; font-size:1.15rem; display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:0.6rem; margin-bottom:0.5rem; color:#4b3321; }
+    .option-price { background:#f5ece3; padding:0.2rem 0.8rem; border-radius:40px; font-size:0.8rem; font-weight:700; color:#bc6a36; white-space:nowrap; }
+    .participants-area { margin-top:1rem; background:#fef7f0; border-radius:60px; padding:0.5rem 1rem; display:flex; align-items:center; gap:0.8rem; flex-wrap:wrap; font-size:0.8rem; font-weight:500; }
+    .participants-area input { width:85px; padding:0.35rem 0.6rem; border-radius:60px; border:1px solid #e2cfbc; text-align:center; font-weight:600; }
+    .opt-desc { font-size:0.7rem; color:#b4845c; margin-top:0.7rem; line-height:1.3; }
+    .nav-buttons { display:flex; justify-content:space-between; padding:0.5rem 2rem 2rem; gap:1rem; flex-wrap:wrap; }
+    button { background:#ede0d4; border:none; padding:0.8rem 2rem; font-weight:600; font-size:0.9rem; border-radius:60px; cursor:pointer; transition:0.2s; font-family:'Inter',sans-serif; color:#5a3e2c; }
+    button.primary { background:#c47a44; color:white; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+    button.primary:hover { background:#ad6534; transform:translateY(-2px); }
+    button.secondary:hover { background:#dfcdbd; }
+    button:disabled { opacity:0.5; cursor:default; }
+    .summary-table { background:#fffbf7; border-radius:1.5rem; padding:1.5rem; margin:1.5rem 0; border:1px solid #eedfcb; }
+    .summary-row { display:flex; justify-content:space-between; padding:0.8rem 0; border-bottom:1px solid #f0e0ce; font-size:0.9rem; }
+    .total-row { font-weight:800; font-size:1.3rem; color:#bc6a36; border-top:2px dashed #e7cfb7; margin-top:1rem; padding-top:1rem; display:flex; justify-content:space-between; }
+    .input-name { width:100%; padding:1rem 1.2rem; border-radius:60px; border:1px solid #e7d5c3; font-size:1rem; margin:0.5rem 0; background:white; font-family:'Inter',sans-serif; }
+    .send-group { display:flex; gap:1rem; flex-wrap:wrap; margin-top:1rem; }
+    .send-btn { flex:1; background:#25D366; color:white; gap:8px; display:inline-flex; align-items:center; justify-content:center; }
+    .send-btn.email { background:#6c5ce7; }
+    .error-msg { color:#cf6f5a; font-size:0.75rem; margin-top:0.3rem; }
+    .status-msg { font-size:0.9rem; margin-top:0.5rem; font-weight:500; }
+    .contact-details-form { background:#fef9f2; border-radius:1.5rem; padding:2rem; text-align:center; max-width:500px; margin:0 auto; border:1px solid #f0e2d2; }
+    .contact-details-form h3 { font-family:'Cormorant Garamond',serif; margin-bottom:1rem; }
+    footer { text-align:center; padding:1.2rem; font-size:0.7rem; color:#bc9a7a; border-top:1px solid #f3e5d8; }
+    @media (max-width:700px) {
+      .container { padding:1rem; }
+      .hero h1 { font-size:2rem; }
+      .category-title { font-size:1.6rem; }
+      .options-grid { grid-template-columns:1fr; }
+      .logo-fixed { width:70px; top:16px; left:16px; }
+      .intro-logo { width:200px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="introOverlay" class="intro-overlay">
+  <img id="introLogoImg" class="intro-logo" src="delduca-logo.png" alt="DelDuca Weddings" onerror="this.src='https://placehold.co/400x200?text=DelDuca&bg=F2E3D6&color=BB6B3A'">
+</div>
+
+<img id="fixedLogo" class="logo-fixed" src="delduca-logo.png" alt="DelDuca Weddings" onerror="this.src='https://placehold.co/200x100?text=DelDuca&bg=F2E3D6&color=BB6B3A'">
+
+<div id="mainContainer" class="container">
+  <div class="wedding-card">
+    <div class="hero">
+      <h1>DelDuca Weddings</h1>
+      <p>Il tuo matrimonio, raccontato con eleganza. Crea il preventivo perfetto, categoria per categoria.</p>
+    </div>
+    <div class="progress-area">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="step-counter"><span id="stepLabel"></span><span id="totalPreview" style="font-weight:600;">€ 0</span></div>
+    </div>
+    <div id="dynamicStep" class="step-content"></div>
+    <div class="nav-buttons" id="navButtons"></div>
+    <footer>Ogni categoria può essere saltata con "Non mi interessa". Alla fine inserisci i tuoi dati per visualizzare il riepilogo.</footer>
+  </div>
+</div>
+
+<script>
+  // URL web app (per invio contatti)
+  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyxwGvW6HLcS0Hp20re6U-mvmZgRRr5X744olpeK2zWQQNVYm2kX4q9-TJAwHaJ4c5N/exec";
+
+  // Categorie (invariate)
+  const CATEGORIES = [
+    { name: "Location & Ricevimento", options: [
+        { name: "Villa Storica con Giardino", price: 3500 },
+        { name: "Castello Medievale", price: 4800 },
+        { name: "Spiaggia Resort esclusivo", price: 4200 },
+        { name: "Agriturismo di Charme", price: 2800 }
+      ] },
+    { name: "Catering (prezzo a persona)", options: [
+        { name: "Buffet Regionale", price: 65, perPerson: true },
+        { name: "Menu Degustazione (5 portate)", price: 95, perPerson: true },
+        { name: "Cucina Fusion & Sushi", price: 110, perPerson: true },
+        { name: "Vegetariano / Vegano gourmet", price: 80, perPerson: true }
+      ] },
+    { name: "Fotografia & Video", options: [
+        { name: "Servizio Fotografico Base", price: 1200 },
+        { name: "Fotografia + Video (cortometraggio)", price: 2200 },
+        { name: "Premium: album stampato + drone", price: 3100 },
+        { name: "Solo video maker", price: 1500 }
+      ] },
+    { name: "Intrattenimento Musicale", options: [
+        { name: "DJ", price: 500 },
+        { name: "DJ + Animazione", price: 800 },
+        { name: "DJ Karaoke", price: 650 },
+        { name: "DJ Animazione e Intrattenimento per bambini", price: 950 }
+      ] },
+    { name: "Fiori e Allestimenti", options: [
+        { name: "Composizione base (bouquet + centrotavola)", price: 450 },
+        { name: "Allestimento chiesa/simbolico", price: 780 },
+        { name: "Allestimento completo (location + arco)", price: 1350 },
+        { name: "Fiori secchi/bohemien", price: 620 }
+      ] },
+    { name: "Wedding Cake & Dessert", options: [
+        { name: "Torta classica 1 piano", price: 180 },
+        { name: "Torta 2 piani personalizzata", price: 290 },
+        { name: "Cupcake tower (50 pz)", price: 220 },
+        { name: "Millefoglie monumentale", price: 340 }
+      ] },
+    { name: "Trasporto Sposi & Ospiti", options: [
+        { name: "Auto d'epoca (per sposi)", price: 350 },
+        { name: "Limusine bianca", price: 490 },
+        { name: "Navetta per ospiti (fino a 20 posti)", price: 600 },
+        { name: "Trasferimento VIP con autista", price: 450 }
+      ] },
+    { name: "Abiti e Styling", options: [
+        { name: "Noleggio abito sposo", price: 250 },
+        { name: "Noleggio abito sposa", price: 550 },
+        { name: "Sartoria su misura sposo", price: 700 },
+        { name: "Makeup & Hair professionale", price: 280 }
+      ] },
+    { name: "Web Designer - Sito Matrimonio", options: [
+        { name: "Sito informativo base", price: 350, desc: "One page con mappa, programma evento, modulo contatto. Design elegante e responsive." },
+        { name: "Sito con Conferma presenza online", price: 600, desc: "Modulo RSVP digitale, galleria fotografica, area riservata per gli ospiti." },
+        { name: "Sito premium + Countdown e mappa interattiva", price: 900, desc: "Timer personalizzato, mappa punti di interesse, lista nozze digitale." },
+        { name: "Pacchetto completo + Branding esclusivo", price: 1200, desc: "Logo personalizzato, coordinato grafico per inviti, assistenza completa, dominio e hosting." }
+      ] },
+    { name: "Wedding Planner & Coordinamento", options: [
+        { name: "Consulenza base (3 incontri)", price: 650 },
+        { name: "Coordinamento day-of", price: 1200 },
+        { name: "Full planning (mese + giorno)", price: 2200 },
+        { name: "Assistente sposa premium", price: 1700 }
+      ] }
+  ];
+  for (let cat of CATEGORIES) cat.options.push({ name: "Non mi interessa / Nessuno di questi", price: 0, perPerson: false });
+
+  const TOTAL = CATEGORIES.length;
+  let selections = Array(TOTAL).fill().map(() => ({ optIndex: null, participants: null }));
+  let currentStep = 0;   // parte dalla prima categoria
+  let userContact = { name: "", email: "", phone: "" };
+  let showSummary = false; // controlla se mostrare il riepilogo dopo aver inserito i dati
+
+  // DOM elements
+  const dynamicDiv = document.getElementById('dynamicStep');
+  const navDiv = document.getElementById('navButtons');
+  const progressFill = document.getElementById('progressFill');
+  const stepLabelSpan = document.getElementById('stepLabel');
+  const totalPreviewSpan = document.getElementById('totalPreview');
+
+  // Funzioni di calcolo e utilità
+  function computeTotal() {
+    let total = 0;
+    for (let i = 0; i < TOTAL; i++) {
+      const sel = selections[i];
+      if (sel.optIndex !== null) {
+        const opt = CATEGORIES[i].options[sel.optIndex];
+        let price = opt.price;
+        if (opt.perPerson && sel.participants && sel.participants > 0 && opt.price !== 0) {
+          price = price * sel.participants;
+        } else if (opt.perPerson && (!sel.participants || sel.participants <= 0) && opt.price !== 0) {
+          price = 0;
+        }
+        total += price;
+      }
+    }
+    return total;
+  }
+  function updateTotalPreview() {
+    totalPreviewSpan.innerText = `€ ${computeTotal().toLocaleString()}`;
+  }
+  function updateProgress() {
+    if (currentStep >= 0 && currentStep < TOTAL) {
+      const percent = (currentStep / TOTAL) * 100;
+      progressFill.style.width = `${percent}%`;
+      stepLabelSpan.innerText = `${CATEGORIES[currentStep].name} · ${currentStep+1}/${TOTAL}`;
+    } else if (currentStep === TOTAL && !showSummary) {
+      progressFill.style.width = '100%';
+      stepLabelSpan.innerText = `Inserisci i tuoi dati`;
+    } else if (currentStep === TOTAL && showSummary) {
+      progressFill.style.width = '100%';
+      stepLabelSpan.innerText = `Riepilogo finale · ${TOTAL} categorie`;
+    }
+    updateTotalPreview();
+  }
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  // Render categorie
+  function renderCategoryStep(stepIdx) {
+    const cat = CATEGORIES[stepIdx];
+    const selData = selections[stepIdx];
+    const selectedIdx = selData.optIndex;
+    const storedPart = selData.participants;
+    let optsHtml = '';
+    cat.options.forEach((opt, idx) => {
+      const isSelected = (selectedIdx === idx);
+      const selectedClass = isSelected ? 'selected' : '';
+      const priceLabel = opt.perPerson ? `€ ${opt.price.toLocaleString()}/persona` : `€ ${opt.price.toLocaleString()}`;
+      let extra = '';
+      if (isSelected && opt.perPerson && opt.price !== 0) {
+        const partVal = (storedPart && storedPart > 0) ? storedPart : 30;
+        extra = `
+          <div class="participants-area">
+            <span>Numero invitati:</span>
+            <input type="number" class="partInput" min="1" max="500" value="${partVal}">
+            <span>persone</span>
+          </div>
+          <div class="opt-desc">Il costo totale del catering sara' prezzo a persona x numero invitati</div>
+        `;
+      } else if (isSelected && opt.desc) {
+        extra = `<div class="opt-desc">${escapeHtml(opt.desc)}</div>`;
+      }
+      optsHtml += `
+        <div class="option-card ${selectedClass}" data-opt-index="${idx}" data-perperson="${opt.perPerson || false}" data-price="${opt.price}">
+          <div class="option-name">
+            <span>${escapeHtml(opt.name)}</span>
+            <span class="option-price">${priceLabel}</span>
+          </div>
+          <div id="extra-${idx}">${extra}</div>
+        </div>
+      `;
+    });
+    return `
+      <div class="category-title">
+        ${escapeHtml(cat.name)}
+        <span class="badge-cat">step ${stepIdx+1} di ${TOTAL}</span>
+      </div>
+      <div class="sub">Scegli una delle proposte, oppure "Non mi interessa" per saltare questa categoria.</div>
+      <div class="options-grid" id="optionsGrid">
+        ${optsHtml}
+      </div>
+      <div class="error-msg" id="stepError" style="display:none;">Seleziona un'opzione prima di proseguire.</div>
+    `;
+  }
+  function attachCategoryEvents() {
+    const grid = document.getElementById('optionsGrid');
+    if (!grid) return;
+    const cards = grid.querySelectorAll('.option-card');
+    cards.forEach((card, i) => { card.style.setProperty('--order', i); });
+    cards.forEach(card => {
+      const optIndex = parseInt(card.dataset.optIndex);
+      const isPerPerson = card.dataset.perperson === 'true';
+      const optPrice = parseFloat(card.dataset.price);
+      card.addEventListener('click', (e) => {
+        if (e.target.tagName === 'INPUT') return;
+        cards.forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selections[currentStep].optIndex = optIndex;
+        if (isPerPerson && optPrice !== 0) {
+          let currPart = selections[currentStep].participants;
+          if (!currPart || currPart < 1) currPart = 30;
+          selections[currentStep].participants = currPart;
+          const extraDiv = card.querySelector(`#extra-${optIndex}`);
+          if (extraDiv) {
+            extraDiv.innerHTML = `
+              <div class="participants-area">
+                <span>Numero invitati:</span>
+                <input type="number" class="partInput" min="1" max="500" value="${currPart}">
+                <span>persone</span>
+              </div>
+              <div class="opt-desc">Il costo totale del catering sara' prezzo a persona x numero invitati</div>
+            `;
+            const partInp = extraDiv.querySelector('.partInput');
+            if (partInp) {
+              partInp.addEventListener('change', (e2) => {
+                let val = parseInt(e2.target.value);
+                if (isNaN(val) || val < 1) val = 1;
+                selections[currentStep].participants = val;
+                updateTotalPreview();
+              });
+            }
+          }
+        } else {
+          selections[currentStep].participants = null;
+          cards.forEach(c => {
+            const idxC = parseInt(c.dataset.optIndex);
+            const extraDivC = c.querySelector(`#extra-${idxC}`);
+            if (extraDivC && c !== card) extraDivC.innerHTML = '';
+          });
+          const opt = CATEGORIES[currentStep].options[optIndex];
+          const extraSel = card.querySelector(`#extra-${optIndex}`);
+          if (extraSel && opt.desc && !isPerPerson) {
+            extraSel.innerHTML = `<div class="opt-desc">${escapeHtml(opt.desc)}</div>`;
+          } else if (extraSel && !isPerPerson) {
+            extraSel.innerHTML = '';
+          }
+        }
+        updateTotalPreview();
+        const errDiv = document.getElementById('stepError');
+        if (errDiv) errDiv.style.display = 'none';
+      });
+      if (card.classList.contains('selected')) {
+        const partInput = card.querySelector('.partInput');
+        if (partInput) {
+          partInput.addEventListener('change', (e) => {
+            let val = parseInt(e.target.value);
+            if (isNaN(val) || val < 1) val = 1;
+            selections[currentStep].participants = val;
+            updateTotalPreview();
+          });
+        }
+      }
+    });
+  }
+  function renderNavForCategory() {
+    const prevDisabled = (currentStep === 0);
+    const nextText = (currentStep === TOTAL - 1) ? "Riepilogo finale" : "Avanti";
+    navDiv.innerHTML = `
+      <button class="secondary" id="prevBtn" ${prevDisabled ? 'disabled' : ''}>← Indietro</button>
+      <button class="primary" id="nextBtn">${nextText}</button>
+    `;
+    document.getElementById('prevBtn')?.addEventListener('click', () => {
+      if (currentStep > 0) {
+        currentStep--;
+        renderCurrentStep();
+      }
+    });
+    document.getElementById('nextBtn')?.addEventListener('click', () => {
+      const selIdx = selections[currentStep].optIndex;
+      if (selIdx === null) {
+        const errDiv = document.getElementById('stepError');
+        if (errDiv) errDiv.style.display = 'block';
+        else alert("Seleziona un'opzione o 'Non mi interessa'");
+        return;
+      }
+      const opt = CATEGORIES[currentStep].options[selIdx];
+      if (opt.perPerson && opt.price !== 0 && (!selections[currentStep].participants || selections[currentStep].participants < 1)) {
+        alert("Per il catering, inserisci il numero di partecipanti.");
+        return;
+      }
+      if (currentStep < TOTAL - 1) {
+        currentStep++;
+        renderCurrentStep();
+      } else if (currentStep === TOTAL - 1) {
+        currentStep = TOTAL;
+        showSummary = false;   // arriva allo step dati senza riepilogo visibile
+        renderCurrentStep();
+      }
+    });
+  }
+
+  // Form per inserire i dati prima di vedere il riepilogo
+  function renderContactFormForSummary() {
+    return `
+      <div class="category-title">I tuoi recapiti</div>
+      <div class="sub">Inserisci nome ed email per visualizzare il riepilogo completo del preventivo.<br>I tuoi dati verranno registrati anche se non invierai il preventivo.</div>
+      <div class="contact-details-form">
+        <input type="text" id="c_name" class="input-name" placeholder="Nome e Cognome (coppia) *" autocomplete="name" value="${escapeHtml(userContact.name)}">
+        <input type="email" id="c_email" class="input-name" placeholder="La tua email *" autocomplete="email" value="${escapeHtml(userContact.email)}">
+        <input type="tel" id="c_phone" class="input-name" placeholder="Telefono (facoltativo)" autocomplete="tel" value="${escapeHtml(userContact.phone)}">
+        <div id="contactError" class="error-msg" style="display:none;">Inserisci nome ed email.</div>
+        <div id="contactStatus" class="status-msg" style="display:none;"></div>
+        <button class="primary" id="showSummaryBtn" style="width:100%; margin-top:1rem;">Visualizza riepilogo</button>
+      </div>
+    `;
+  }
+
+  // Riepilogo con totali e invii
+  function renderFullSummary() {
+    let rows = '';
+    let total = 0;
+    for (let i = 0; i < TOTAL; i++) {
+      const cat = CATEGORIES[i];
+      const sel = selections[i];
+      if (sel.optIndex !== null) {
+        const opt = cat.options[sel.optIndex];
+        let price = opt.price;
+        let priceDisplay = `€ ${opt.price.toLocaleString()}`;
+        if (opt.perPerson && sel.participants && sel.participants > 0 && opt.price !== 0) {
+          const base = opt.price;
+          price = base * sel.participants;
+          priceDisplay = `€ ${base.toLocaleString()} x ${sel.participants} = € ${price.toLocaleString()}`;
+        } else if (opt.perPerson && opt.price !== 0 && (!sel.participants || sel.participants < 1)) {
+          price = 0;
+          priceDisplay = "Partecipanti non indicati";
+        }
+        total += price;
+        rows += `
+          <div class="summary-row">
+            <span><strong>${escapeHtml(cat.name)}</strong><br><span style="font-size:0.8rem;">${escapeHtml(opt.name)}</span></span>
+            <span style="font-weight:600;">${priceDisplay}</span>
+          </div>
+        `;
+      } else {
+        rows += `<div class="summary-row"><span><strong>${escapeHtml(cat.name)}</strong><br><span style="color:#b4845c;">Nessuna scelta</span></span><span>€ 0</span></div>`;
+      }
+    }
+    return `
+      <div class="category-title">Il tuo preventivo personalizzato</div>
+      <div class="sub">Verifica le tue scelte, poi invia il preventivo via WhatsApp o email.</div>
+      <div class="summary-table">
+        ${rows}
+        <div class="total-row"><span>TOTALE EVENTO</span><span>€ ${total.toLocaleString()}</span></div>
+      </div>
+      <div class="send-group">
+        <button id="sendWhatsBtn" class="send-btn">Invia preventivo via WhatsApp</button>
+        <button id="sendMailBtn" class="send-btn email">Invia via Email</button>
+      </div>
+    `;
+  }
+
+  function renderNavForSummary(showEdit = true) {
+    if (showEdit) {
+      navDiv.innerHTML = `
+        <button class="secondary" id="backEditBtn">Modifica selezioni</button>
+        <button class="secondary" id="resetAllBtn" style="background:#e6cfbc;">Ricomincia da capo</button>
+      `;
+      document.getElementById('backEditBtn')?.addEventListener('click', () => {
+        currentStep = TOTAL - 1;
+        showSummary = false;
+        renderCurrentStep();
+      });
+      document.getElementById('resetAllBtn')?.addEventListener('click', () => {
+        if (confirm('Cancellare tutte le selezioni e ricominciare?')) {
+          selections = Array(TOTAL).fill().map(() => ({ optIndex: null, participants: null }));
+          currentStep = 0;
+          showSummary = false;
+          renderCurrentStep();
+        }
+      });
+    } else {
+      navDiv.innerHTML = `<button class="secondary" id="backToDataBtn">← Indietro</button>`;
+      document.getElementById('backToDataBtn')?.addEventListener('click', () => {
+        currentStep = TOTAL;
+        showSummary = false;
+        renderCurrentStep();
+      });
+    }
+  }
+
+  function buildMessage(clientName) {
+    const nameLine = clientName.trim() || "Cliente";
+    let msg = `DELDUCA WEDDINGS - Preventivo\nCoppia: ${nameLine}\n\n`;
+    let total = 0;
+    for (let i = 0; i < TOTAL; i++) {
+      const cat = CATEGORIES[i];
+      const sel = selections[i];
+      if (sel.optIndex !== null) {
+        const opt = cat.options[sel.optIndex];
+        let price = opt.price;
+        let extra = '';
+        if (opt.perPerson && sel.participants && sel.participants > 0 && opt.price !== 0) {
+          price = price * sel.participants;
+          extra = ` (${opt.price}€/persona x ${sel.participants})`;
+        }
+        total += price;
+        msg += `- ${cat.name}: ${opt.name}${extra} -> € ${price.toLocaleString()}\n`;
+      } else {
+        msg += `- ${cat.name}: nessuna selezione\n`;
+      }
+    }
+    msg += `\nTOTALE COMPLESSIVO: € ${total.toLocaleString()}\nGrazie per averci scelto, riceverai un nostro contatto.`;
+    return msg;
+  }
+
+  // Invio contatti a Google Apps Script (no-cors) - viene chiamato solo al momento di "Visualizza riepilogo"
+  function submitContactToGoogle(contact, showStatusDiv = false) {
+    return fetch(WEBAPP_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(contact)
+    }).then(() => {
+      console.log("Contatto inviato allo script", contact);
+      if (showStatusDiv) {
+        const statusDiv = document.getElementById('contactStatus');
+        if (statusDiv) {
+          statusDiv.style.display = 'block';
+          statusDiv.innerText = "✅ Dati registrati!";
+          setTimeout(() => { statusDiv.style.display = 'none'; }, 3000);
+        }
+      }
+    }).catch(e => console.error("Errore invio contatto:", e));
+  }
+
+  function attachSummaryEvents() {
+    const whatsBtn = document.getElementById('sendWhatsBtn');
+    const emailBtn = document.getElementById('sendMailBtn');
+    if (whatsBtn) {
+      whatsBtn.onclick = () => {
+        if (!userContact.name || !userContact.email) {
+          alert("Dati mancanti. Torna indietro e inserisci nome ed email.");
+          return;
+        }
+        // NON inviamo più i dati allo script qui (sono già stati inviati al momento del riepilogo)
+        const msg = buildMessage(userContact.name);
+        window.open(`https://wa.me/393331395730?text=${encodeURIComponent(msg)}`, '_blank');
+      };
+    }
+    if (emailBtn) {
+      emailBtn.onclick = () => {
+        if (!userContact.name || !userContact.email) {
+          alert("Dati mancanti. Torna indietro e inserisci nome ed email.");
+          return;
+        }
+        const subject = `Preventivo Matrimonio - ${userContact.name}`;
+        const body = buildMessage(userContact.name);
+        window.location.href = `mailto:iartservizi@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      };
+    }
+  }
+
+  // Render principale
+  function renderCurrentStep() {
+    if (currentStep < TOTAL) {
+      dynamicDiv.innerHTML = renderCategoryStep(currentStep);
+      attachCategoryEvents();
+      renderNavForCategory();
+      updateProgress();
+    } else if (currentStep === TOTAL && !showSummary) {
+      dynamicDiv.innerHTML = renderContactFormForSummary();
+      const btn = document.getElementById('showSummaryBtn');
+      if (btn) {
+        btn.addEventListener('click', async () => {
+          const name = document.getElementById('c_name')?.value.trim() || "";
+          const email = document.getElementById('c_email')?.value.trim() || "";
+          const phone = document.getElementById('c_phone')?.value.trim() || "";
+          const errDiv = document.getElementById('contactError');
+          if (!name || !email) {
+            if (errDiv) errDiv.style.display = 'block';
+            return;
+          }
+          if (errDiv) errDiv.style.display = 'none';
+          userContact = { name, email, phone };
+          // INVIO IMMEDIATO ALL'APPS SCRIPT (solo qui, non più nei pulsanti di invio)
+          await submitContactToGoogle(userContact, true);
+          showSummary = true;
+          renderCurrentStep();
+        });
+      }
+      renderNavForSummary(false);
+      updateProgress();
+    } else if (currentStep === TOTAL && showSummary) {
+      dynamicDiv.innerHTML = renderFullSummary();
+      attachSummaryEvents();
+      renderNavForSummary(true);
+      updateProgress();
+    }
+  }
+
+  // Animazione logo
+  const introOverlay = document.getElementById('introOverlay');
+  const fixedLogo = document.getElementById('fixedLogo');
+  const mainContainer = document.getElementById('mainContainer');
+  function startAnimation() {
+    setTimeout(() => {
+      introOverlay.classList.add('fade-out');
+      fixedLogo.classList.add('visible');
+      mainContainer.classList.add('visible');
+    }, 900);
+  }
+  window.addEventListener('load', startAnimation);
+  setTimeout(() => { if (introOverlay && !introOverlay.classList.contains('fade-out')) startAnimation(); }, 1500);
+
+  function init() {
+    selections = Array(TOTAL).fill().map(() => ({ optIndex: null, participants: null }));
+    currentStep = 0;
+    showSummary = false;
+    renderCurrentStep();
+  }
+  init();
+</script>
+</body>
+</html>
