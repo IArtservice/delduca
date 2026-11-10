@@ -78,7 +78,7 @@
   <div class="wedding-card">
     <div class="hero">
       <h1>DelDuca Weddings</h1>
-      <p>Il tuo matrimonio, raccontato con eleganza. Crea il preventivo perfetto, categoria per categoria.</p>
+      <p>Simula e crea il tuo budget per il tuo evento</p>
     </div>
     <div class="progress-area">
       <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
@@ -94,31 +94,29 @@
   // URL web app (per invio contatti)
   const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyxwGvW6HLcS0Hp20re6U-mvmZgRRr5X744olpeK2zWQQNVYm2kX4q9-TJAwHaJ4c5N/exec";
 
-  // Categorie (invariate)
+  // Categorie del configuratore
   const CATEGORIES = [
     { name: "Location & Ricevimento", options: [
-        { name: "Villa Storica con Giardino", price: 3500 },
-        { name: "Castello Medievale", price: 4800 },
-        { name: "Spiaggia Resort esclusivo", price: 4200 },
-        { name: "Agriturismo di Charme", price: 2800 }
+        { name: "Fascia 1: Villa sul lago e villa storica", price: 5000, startingAt: true },
+        { name: "Fascia 2: Castelli e ristoranti 5 stelle", price: 2500, startingAt: true },
+        { name: "Fascia 3: Agriturismi e ristoranti fascia alta", price: 1000, startingAt: true }
       ] },
-    { name: "Catering (prezzo a persona)", options: [
-        { name: "Buffet Regionale", price: 65, perPerson: true },
-        { name: "Menu Degustazione (5 portate)", price: 95, perPerson: true },
-        { name: "Cucina Fusion & Sushi", price: 110, perPerson: true },
-        { name: "Vegetariano / Vegano gourmet", price: 80, perPerson: true }
+    { name: "Food", options: [
+        { name: "Catering", price: 150, perPerson: true, startingAt: true },
+        { name: "Cucina interna", price: 100, perPerson: true, startingAt: true },
+        { name: "Cucina stellata", price: 200, perPerson: true, startingAt: true }
       ] },
     { name: "Fotografia & Video", options: [
-        { name: "Servizio Fotografico Base", price: 1200 },
-        { name: "Fotografia + Video (cortometraggio)", price: 2200 },
-        { name: "Premium: album stampato + drone", price: 3100 },
-        { name: "Solo video maker", price: 1500 }
+        { name: "Foto", price: 800, startingAt: true },
+        { name: "Foto + video", price: 2000, startingAt: true },
+        { name: "Solo video maker", price: 1000 },
+        { name: "Premium", price: 3000 }
       ] },
     { name: "Intrattenimento Musicale", options: [
-        { name: "DJ", price: 500 },
-        { name: "DJ + Animazione", price: 800 },
-        { name: "DJ Karaoke", price: 650 },
-        { name: "DJ Animazione e Intrattenimento per bambini", price: 950 }
+        { name: "DJ, 1 postazione per 4 ore", price: 500 },
+        { name: "DJ + intrattenitore", price: 900 },
+        { name: "DJ con karaoke", price: 800 },
+        { name: "DJ + conduttore", price: 1500 }
       ] },
     { name: "Fiori e Allestimenti", options: [
         { name: "Composizione base (bouquet + centrotavola)", price: 450 },
@@ -133,34 +131,42 @@
         { name: "Millefoglie monumentale", price: 340 }
       ] },
     { name: "Trasporto Sposi & Ospiti", options: [
-        { name: "Auto d'epoca (per sposi)", price: 350 },
-        { name: "Limusine bianca", price: 490 },
+        { name: "Auto d'epoca", price: 700, startingAt: true },
+        { name: "Limousine", price: 800, startingAt: true },
         { name: "Navetta per ospiti (fino a 20 posti)", price: 600 },
-        { name: "Trasferimento VIP con autista", price: 450 }
+        { name: "Auto sportiva o cabrio", price: 400 }
       ] },
-    { name: "Abiti e Styling", options: [
-        { name: "Noleggio abito sposo", price: 250 },
-        { name: "Noleggio abito sposa", price: 550 },
-        { name: "Sartoria su misura sposo", price: 700 },
-        { name: "Makeup & Hair professionale", price: 280 }
+    { name: "Abiti", multiple: true, options: [
+        { name: "Sartoria su misura sposo", price: 1000, startingAt: true },
+        { name: "Sartoria su misura sposa", price: 1500, startingAt: true }
       ] },
-    { name: "Web Designer - Sito Matrimonio", options: [
-        { name: "Sito informativo base", price: 350, desc: "One page con mappa, programma evento, modulo contatto. Design elegante e responsive." },
-        { name: "Sito con Conferma presenza online", price: 600, desc: "Modulo RSVP digitale, galleria fotografica, area riservata per gli ospiti." },
-        { name: "Sito premium + Countdown e mappa interattiva", price: 900, desc: "Timer personalizzato, mappa punti di interesse, lista nozze digitale." },
-        { name: "Pacchetto completo + Branding esclusivo", price: 1200, desc: "Logo personalizzato, coordinato grafico per inviti, assistenza completa, dominio e hosting." }
+    { name: "Social Communication", options: [
+        { name: "Invito informativo base", price: 200 },
+        { name: "Invito con sito, conferme e gestione intolleranze", price: 400 },
+        { name: "Sito premium con countdown", price: 500 },
+        { name: "Sito con permanenza online per un anno e contenuti a scelta", price: 600 }
       ] },
-    { name: "Wedding Planner & Coordinamento", options: [
-        { name: "Consulenza base (3 incontri)", price: 650 },
-        { name: "Coordinamento day-of", price: 1200 },
-        { name: "Full planning (mese + giorno)", price: 2200 },
-        { name: "Assistente sposa premium", price: 1700 }
+    { name: "Coordinamento", multiple: true, options: [
+        { name: "Wedding planner", price: 1000, startingAt: true },
+        { name: "Event planner", price: 700 },
+        { name: "Music planner", price: 500 },
+        { name: "Wedding consulting", price: 500 }
+      ] },
+    { name: "Special effect e intrattenimento passivo", options: [
+        { name: "Photo booth", price: 700 },
+        { name: "Foto con totem", price: 500 },
+        { name: "Foto bus", price: 900 },
+        { name: "Pedana rotante", price: 600 },
+        { name: "Smoke boom", price: 600, startingAt: true },
+        { name: "Luci a batteria", price: 200, startingAt: true },
+        { name: "Fontane per torta", price: 400, startingAt: true }
       ] }
   ];
   for (let cat of CATEGORIES) cat.options.push({ name: "Non mi interessa / Nessuno di questi", price: 0, perPerson: false });
 
   const TOTAL = CATEGORIES.length;
-  let selections = Array(TOTAL).fill().map(() => ({ optIndex: null, participants: null }));
+  const createEmptySelection = () => ({ optIndices: [], participants: null });
+  let selections = Array(TOTAL).fill().map(createEmptySelection);
   let currentStep = 0;   // parte dalla prima categoria
   let userContact = { name: "", email: "", phone: "" };
   let showSummary = false; // controlla se mostrare il riepilogo dopo aver inserito i dati
@@ -173,20 +179,40 @@
   const totalPreviewSpan = document.getElementById('totalPreview');
 
   // Funzioni di calcolo e utilità
+  function getSelectedOptions(stepIndex) {
+    return selections[stepIndex].optIndices
+      .map(optIndex => CATEGORIES[stepIndex].options[optIndex])
+      .filter(Boolean);
+  }
+  function getOptionPrice(opt, selection) {
+    if (opt.perPerson) return opt.price * (selection.participants || 0);
+    return opt.price;
+  }
+  function formatOptionPrice(opt) {
+    const amount = `€ ${opt.price.toLocaleString()}`;
+    if (opt.perPerson) return `${opt.startingAt ? 'da ' : ''}${amount}/persona`;
+    return `${opt.startingAt ? 'da ' : ''}${amount}`;
+  }
+  function renderOptionExtra(opt, participants) {
+    if (opt.perPerson && opt.price !== 0) {
+      const partVal = participants > 0 ? participants : 30;
+      return `
+        <div class="participants-area">
+          <span>Numero invitati:</span>
+          <input type="number" class="partInput" min="1" max="500" value="${partVal}">
+          <span>persone</span>
+        </div>
+        <div class="opt-desc">Il costo del food viene calcolato in base al numero di invitati.</div>
+      `;
+    }
+    if (opt.desc) return `<div class="opt-desc">${escapeHtml(opt.desc)}</div>`;
+    return '';
+  }
   function computeTotal() {
     let total = 0;
     for (let i = 0; i < TOTAL; i++) {
       const sel = selections[i];
-      if (sel.optIndex !== null) {
-        const opt = CATEGORIES[i].options[sel.optIndex];
-        let price = opt.price;
-        if (opt.perPerson && sel.participants && sel.participants > 0 && opt.price !== 0) {
-          price = price * sel.participants;
-        } else if (opt.perPerson && (!sel.participants || sel.participants <= 0) && opt.price !== 0) {
-          price = 0;
-        }
-        total += price;
-      }
+      getSelectedOptions(i).forEach(opt => { total += getOptionPrice(opt, sel); });
     }
     return total;
   }
@@ -221,32 +247,17 @@
   function renderCategoryStep(stepIdx) {
     const cat = CATEGORIES[stepIdx];
     const selData = selections[stepIdx];
-    const selectedIdx = selData.optIndex;
-    const storedPart = selData.participants;
+    const selectedIndices = selData.optIndices;
     let optsHtml = '';
     cat.options.forEach((opt, idx) => {
-      const isSelected = (selectedIdx === idx);
+      const isSelected = selectedIndices.includes(idx);
       const selectedClass = isSelected ? 'selected' : '';
-      const priceLabel = opt.perPerson ? `€ ${opt.price.toLocaleString()}/persona` : `€ ${opt.price.toLocaleString()}`;
-      let extra = '';
-      if (isSelected && opt.perPerson && opt.price !== 0) {
-        const partVal = (storedPart && storedPart > 0) ? storedPart : 30;
-        extra = `
-          <div class="participants-area">
-            <span>Numero invitati:</span>
-            <input type="number" class="partInput" min="1" max="500" value="${partVal}">
-            <span>persone</span>
-          </div>
-          <div class="opt-desc">Il costo totale del catering sara' prezzo a persona x numero invitati</div>
-        `;
-      } else if (isSelected && opt.desc) {
-        extra = `<div class="opt-desc">${escapeHtml(opt.desc)}</div>`;
-      }
+      const extra = isSelected ? renderOptionExtra(opt, selData.participants) : '';
       optsHtml += `
-        <div class="option-card ${selectedClass}" data-opt-index="${idx}" data-perperson="${opt.perPerson || false}" data-price="${opt.price}">
+        <div class="option-card ${selectedClass}" data-opt-index="${idx}" role="${cat.multiple ? 'checkbox' : 'radio'}" tabindex="0" aria-checked="${isSelected}">
           <div class="option-name">
             <span>${escapeHtml(opt.name)}</span>
-            <span class="option-price">${priceLabel}</span>
+            <span class="option-price">${formatOptionPrice(opt)}</span>
           </div>
           <div id="extra-${idx}">${extra}</div>
         </div>
@@ -257,7 +268,7 @@
         ${escapeHtml(cat.name)}
         <span class="badge-cat">step ${stepIdx+1} di ${TOTAL}</span>
       </div>
-      <div class="sub">Scegli una delle proposte, oppure "Non mi interessa" per saltare questa categoria.</div>
+      <div class="sub">${cat.multiple ? 'Puoi scegliere più proposte; usa "Non mi interessa" per saltare la categoria.' : 'Scegli una delle proposte, oppure "Non mi interessa" per saltare questa categoria.'}</div>
       <div class="options-grid" id="optionsGrid">
         ${optsHtml}
       </div>
@@ -269,70 +280,85 @@
     if (!grid) return;
     const cards = grid.querySelectorAll('.option-card');
     cards.forEach((card, i) => { card.style.setProperty('--order', i); });
-    cards.forEach(card => {
-      const optIndex = parseInt(card.dataset.optIndex);
-      const isPerPerson = card.dataset.perperson === 'true';
-      const optPrice = parseFloat(card.dataset.price);
-      card.addEventListener('click', (e) => {
-        if (e.target.tagName === 'INPUT') return;
-        cards.forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        selections[currentStep].optIndex = optIndex;
-        if (isPerPerson && optPrice !== 0) {
-          let currPart = selections[currentStep].participants;
-          if (!currPart || currPart < 1) currPart = 30;
-          selections[currentStep].participants = currPart;
-          const extraDiv = card.querySelector(`#extra-${optIndex}`);
-          if (extraDiv) {
-            extraDiv.innerHTML = `
-              <div class="participants-area">
-                <span>Numero invitati:</span>
-                <input type="number" class="partInput" min="1" max="500" value="${currPart}">
-                <span>persone</span>
-              </div>
-              <div class="opt-desc">Il costo totale del catering sara' prezzo a persona x numero invitati</div>
-            `;
-            const partInp = extraDiv.querySelector('.partInput');
-            if (partInp) {
-              partInp.addEventListener('change', (e2) => {
-                let val = parseInt(e2.target.value);
-                if (isNaN(val) || val < 1) val = 1;
-                selections[currentStep].participants = val;
-                updateTotalPreview();
-              });
-            }
-          }
-        } else {
-          selections[currentStep].participants = null;
-          cards.forEach(c => {
-            const idxC = parseInt(c.dataset.optIndex);
-            const extraDivC = c.querySelector(`#extra-${idxC}`);
-            if (extraDivC && c !== card) extraDivC.innerHTML = '';
-          });
-          const opt = CATEGORIES[currentStep].options[optIndex];
-          const extraSel = card.querySelector(`#extra-${optIndex}`);
-          if (extraSel && opt.desc && !isPerPerson) {
-            extraSel.innerHTML = `<div class="opt-desc">${escapeHtml(opt.desc)}</div>`;
-          } else if (extraSel && !isPerPerson) {
-            extraSel.innerHTML = '';
-          }
-        }
-        updateTotalPreview();
-        const errDiv = document.getElementById('stepError');
-        if (errDiv) errDiv.style.display = 'none';
-      });
-      if (card.classList.contains('selected')) {
+
+    const updateCards = () => {
+      cards.forEach(card => {
+        const optIndex = parseInt(card.dataset.optIndex, 10);
+        const opt = CATEGORIES[currentStep].options[optIndex];
+        const isSelected = selections[currentStep].optIndices.includes(optIndex);
+        card.classList.toggle('selected', isSelected);
+        card.setAttribute('aria-checked', String(isSelected));
+        const extraDiv = card.querySelector(`#extra-${optIndex}`);
+        if (extraDiv) extraDiv.innerHTML = isSelected ? renderOptionExtra(opt, selections[currentStep].participants) : '';
+
         const partInput = card.querySelector('.partInput');
         if (partInput) {
           partInput.addEventListener('change', (e) => {
-            let val = parseInt(e.target.value);
+            let val = parseInt(e.target.value, 10);
             if (isNaN(val) || val < 1) val = 1;
+            if (val > 500) val = 500;
+            e.target.value = val;
             selections[currentStep].participants = val;
             updateTotalPreview();
           });
+          partInput.addEventListener('input', (e) => {
+            const val = parseInt(e.target.value, 10);
+            selections[currentStep].participants = (isNaN(val) || val < 1) ? 0 : Math.min(val, 500);
+            updateTotalPreview();
+          });
+        }
+      });
+    };
+
+    const chooseOption = (optIndex) => {
+      const cat = CATEGORIES[currentStep];
+      const selection = selections[currentStep];
+      const noneIndex = cat.options.findIndex(opt => opt.price === 0);
+      const opt = cat.options[optIndex];
+
+      if (cat.multiple) {
+        if (optIndex === noneIndex) {
+          selection.optIndices = [optIndex];
+          selection.participants = null;
+        } else {
+          selection.optIndices = selection.optIndices.filter(index => index !== noneIndex);
+          if (selection.optIndices.includes(optIndex)) {
+            selection.optIndices = selection.optIndices.filter(index => index !== optIndex);
+          } else {
+            selection.optIndices.push(optIndex);
+          }
+          selection.participants = null;
+        }
+      } else {
+        selection.optIndices = [optIndex];
+        if (opt.perPerson && opt.price !== 0) {
+          if (!selection.participants || selection.participants < 1) selection.participants = 30;
+        } else {
+          selection.participants = null;
         }
       }
+
+      updateCards();
+      updateTotalPreview();
+      const errDiv = document.getElementById('stepError');
+      if (errDiv) errDiv.style.display = 'none';
+    };
+
+    cards.forEach(card => {
+      const optIndex = parseInt(card.dataset.optIndex);
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('input')) return;
+        chooseOption(optIndex);
+      });
+      card.addEventListener('keydown', (e) => {
+        if (e.target.closest('input')) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          chooseOption(optIndex);
+        }
+      });
     });
+    updateCards();
   }
   function renderNavForCategory() {
     const prevDisabled = (currentStep === 0);
@@ -348,16 +374,16 @@
       }
     });
     document.getElementById('nextBtn')?.addEventListener('click', () => {
-      const selIdx = selections[currentStep].optIndex;
-      if (selIdx === null) {
+      const selectedOptions = getSelectedOptions(currentStep);
+      if (selectedOptions.length === 0) {
         const errDiv = document.getElementById('stepError');
         if (errDiv) errDiv.style.display = 'block';
         else alert("Seleziona un'opzione o 'Non mi interessa'");
         return;
       }
-      const opt = CATEGORIES[currentStep].options[selIdx];
-      if (opt.perPerson && opt.price !== 0 && (!selections[currentStep].participants || selections[currentStep].participants < 1)) {
-        alert("Per il catering, inserisci il numero di partecipanti.");
+      const perPersonOption = selectedOptions.find(opt => opt.perPerson && opt.price !== 0);
+      if (perPersonOption && (!selections[currentStep].participants || selections[currentStep].participants < 1)) {
+        alert("Per il food, inserisci il numero di invitati.");
         return;
       }
       if (currentStep < TOTAL - 1) {
@@ -394,35 +420,43 @@
     for (let i = 0; i < TOTAL; i++) {
       const cat = CATEGORIES[i];
       const sel = selections[i];
-      if (sel.optIndex !== null) {
-        const opt = cat.options[sel.optIndex];
-        let price = opt.price;
-        let priceDisplay = `€ ${opt.price.toLocaleString()}`;
-        if (opt.perPerson && sel.participants && sel.participants > 0 && opt.price !== 0) {
-          const base = opt.price;
-          price = base * sel.participants;
-          priceDisplay = `€ ${base.toLocaleString()} x ${sel.participants} = € ${price.toLocaleString()}`;
-        } else if (opt.perPerson && opt.price !== 0 && (!sel.participants || sel.participants < 1)) {
-          price = 0;
-          priceDisplay = "Partecipanti non indicati";
-        }
-        total += price;
-        rows += `
-          <div class="summary-row">
-            <span><strong>${escapeHtml(cat.name)}</strong><br><span style="font-size:0.8rem;">${escapeHtml(opt.name)}</span></span>
-            <span style="font-weight:600;">${priceDisplay}</span>
-          </div>
-        `;
+      const selectedOptions = getSelectedOptions(i);
+      if (selectedOptions.length > 0) {
+        selectedOptions.forEach(opt => {
+          if (opt.price === 0) {
+            rows += `
+              <div class="summary-row">
+                <span><strong>${escapeHtml(cat.name)}</strong><br><span style="color:#b4845c;">Nessuna scelta</span></span>
+                <span>€ 0</span>
+              </div>
+            `;
+            return;
+          }
+          const price = getOptionPrice(opt, sel);
+          total += price;
+          let priceDisplay = formatOptionPrice(opt);
+          if (opt.perPerson && sel.participants && sel.participants > 0) {
+            priceDisplay = `${opt.startingAt ? 'da ' : ''}€ ${opt.price.toLocaleString()}/persona × ${sel.participants} = € ${price.toLocaleString()}`;
+          } else if (opt.perPerson) {
+            priceDisplay = "Numero invitati non indicato";
+          }
+          rows += `
+            <div class="summary-row">
+              <span><strong>${escapeHtml(cat.name)}</strong><br><span style="font-size:0.8rem;">${escapeHtml(opt.name)}</span></span>
+              <span style="font-weight:600;">${priceDisplay}</span>
+            </div>
+          `;
+        });
       } else {
         rows += `<div class="summary-row"><span><strong>${escapeHtml(cat.name)}</strong><br><span style="color:#b4845c;">Nessuna scelta</span></span><span>€ 0</span></div>`;
       }
     }
     return `
       <div class="category-title">Il tuo preventivo personalizzato</div>
-      <div class="sub">Verifica le tue scelte, poi invia il preventivo via WhatsApp o email.</div>
+      <div class="sub">Verifica le tue scelte, poi invia il preventivo via WhatsApp o email. Le voci "a partire da" indicano prezzi minimi.</div>
       <div class="summary-table">
         ${rows}
-        <div class="total-row"><span>TOTALE EVENTO</span><span>€ ${total.toLocaleString()}</span></div>
+        <div class="total-row"><span>TOTALE MINIMO INDICATIVO</span><span>€ ${total.toLocaleString()}</span></div>
       </div>
       <div class="send-group">
         <button id="sendWhatsBtn" class="send-btn">Invia preventivo via WhatsApp</button>
@@ -444,7 +478,7 @@
       });
       document.getElementById('resetAllBtn')?.addEventListener('click', () => {
         if (confirm('Cancellare tutte le selezioni e ricominciare?')) {
-          selections = Array(TOTAL).fill().map(() => ({ optIndex: null, participants: null }));
+          selections = Array(TOTAL).fill().map(createEmptySelection);
           currentStep = 0;
           showSummary = false;
           renderCurrentStep();
@@ -467,21 +501,26 @@
     for (let i = 0; i < TOTAL; i++) {
       const cat = CATEGORIES[i];
       const sel = selections[i];
-      if (sel.optIndex !== null) {
-        const opt = cat.options[sel.optIndex];
-        let price = opt.price;
-        let extra = '';
-        if (opt.perPerson && sel.participants && sel.participants > 0 && opt.price !== 0) {
-          price = price * sel.participants;
-          extra = ` (${opt.price}€/persona x ${sel.participants})`;
-        }
-        total += price;
-        msg += `- ${cat.name}: ${opt.name}${extra} -> € ${price.toLocaleString()}\n`;
+      const selectedOptions = getSelectedOptions(i);
+      if (selectedOptions.length > 0) {
+        selectedOptions.forEach(opt => {
+          if (opt.price === 0) {
+            msg += `- ${cat.name}: nessuna scelta\n`;
+            return;
+          }
+          const price = getOptionPrice(opt, sel);
+          total += price;
+          const startingLabel = opt.startingAt ? 'da ' : '';
+          const extra = opt.perPerson && sel.participants
+            ? ` (${startingLabel}€ ${opt.price.toLocaleString()}/persona × ${sel.participants})`
+            : '';
+          msg += `- ${cat.name}: ${opt.name}${extra} -> ${startingLabel}€ ${price.toLocaleString()}\n`;
+        });
       } else {
         msg += `- ${cat.name}: nessuna selezione\n`;
       }
     }
-    msg += `\nTOTALE COMPLESSIVO: € ${total.toLocaleString()}\nGrazie per averci scelto, riceverai un nostro contatto.`;
+    msg += `\nTOTALE MINIMO INDICATIVO: € ${total.toLocaleString()}\nGrazie per averci scelto, riceverai un nostro contatto.`;
     return msg;
   }
 
@@ -585,7 +624,7 @@
   setTimeout(() => { if (introOverlay && !introOverlay.classList.contains('fade-out')) startAnimation(); }, 1500);
 
   function init() {
-    selections = Array(TOTAL).fill().map(() => ({ optIndex: null, participants: null }));
+    selections = Array(TOTAL).fill().map(createEmptySelection);
     currentStep = 0;
     showSummary = false;
     renderCurrentStep();
