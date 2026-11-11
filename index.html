@@ -56,6 +56,115 @@
     .contact-details-form { background:#fef9f2; border-radius:1.5rem; padding:2rem; text-align:center; max-width:500px; margin:0 auto; border:1px solid #f0e2d2; }
     .contact-details-form h3 { font-family:'Cormorant Garamond',serif; margin-bottom:1rem; }
     footer { text-align:center; padding:1.2rem; font-size:0.7rem; color:#bc9a7a; border-top:1px solid #f3e5d8; }
+    /* Tema grafico ispirato al documento DelDuca: bianco, grigio e blu. */
+    :root {
+      color-scheme: light;
+      --paper: #ffffff;
+      --ink: #26282c;
+      --muted-ink: #5d626b;
+      --blue: #6f94d5;
+      --blue-dark: #456eae;
+      --blue-pale: #edf3fc;
+      --line: #d6e1f2;
+    }
+    body { background:#f3f4f6; color:var(--ink); }
+    .intro-overlay { background:var(--paper); }
+    .container { max-width:1200px; }
+    .wedding-card {
+      position:relative;
+      isolation:isolate;
+      background:var(--paper);
+      border:1px solid var(--line);
+      border-radius:0.8rem;
+      box-shadow:0 16px 40px rgba(34,52,83,0.09);
+    }
+    .wedding-card::before {
+      content:"";
+      position:absolute;
+      inset:7rem 2rem auto auto;
+      width:min(34vw,360px);
+      height:300px;
+      background:url('delduca-logo.png') no-repeat center / contain;
+      opacity:0.035;
+      pointer-events:none;
+      z-index:-1;
+    }
+    .hero { background:#fff; border-bottom:2px solid var(--blue); }
+    .hero h1, .category-title, .contact-details-form h3 {
+      font-family:'Inter',sans-serif;
+      color:var(--ink);
+    }
+    .hero h1 { letter-spacing:0; }
+    .hero p { color:var(--muted-ink); }
+    .progress-area { padding-top:1.5rem; }
+    .progress-track { background:#e8edf5; }
+    .progress-fill { background:var(--blue); }
+    .step-counter { color:var(--blue-dark); }
+    .category-title { color:var(--ink); }
+    .badge-cat { background:var(--blue-pale); color:var(--blue-dark); }
+    .sub { color:var(--muted-ink); border-left-color:var(--blue); }
+    .option-card { background:#fff; border-color:var(--line); }
+    .option-card:hover { border-color:var(--blue); box-shadow:0 14px 26px rgba(40,69,116,0.12); }
+    .option-card.selected { border-color:var(--blue); background:#f5f8fe; box-shadow:0 8px 20px rgba(70,110,174,0.12); }
+    .option-choice { display:flex; align-items:flex-start; gap:0.75rem; cursor:pointer; }
+    .choice-input { width:1rem; height:1rem; flex:none; margin-top:0.2rem; accent-color:var(--blue-dark); }
+    .option-choice .option-name { flex:1; }
+    .option-name { color:var(--ink); }
+    .option-price { background:var(--blue-pale); color:var(--blue-dark); }
+    .participants-area { background:#f6f8fb; }
+    .participants-area input, .input-name { border-color:#c9d5e8; }
+    .opt-desc { color:var(--muted-ink); }
+    button { background:#e8edf5; color:#35445c; }
+    button.primary { background:var(--blue); color:#fff; }
+    button.primary:hover { background:var(--blue-dark); }
+    button.secondary:hover { background:#dce5f2; }
+    .summary-table { background:#fff; border-color:var(--blue); border-radius:0.7rem; }
+    .summary-row { border-bottom-color:#e6ebf2; }
+    .total-row { color:var(--blue-dark); border-top-color:var(--blue); }
+    .send-btn { background:var(--blue); color:#fff; }
+    .send-btn.email { background:var(--blue-dark); }
+    .error-msg { color:#a23e3e; }
+    .contact-details-form { background:#fbfcfe; border-color:var(--line); border-radius:0.8rem; }
+    footer { color:var(--muted-ink); border-top-color:var(--line); }
+    .video-btn {
+      display:inline-flex;
+      align-items:center;
+      gap:0.45rem;
+      margin-top:0.75rem;
+      padding:0.5rem 0.85rem;
+      border:1px solid var(--blue);
+      border-radius:0.4rem;
+      background:#fff;
+      color:var(--blue-dark);
+      font-size:0.8rem;
+    }
+    .video-btn:hover { background:var(--blue-pale); }
+    .video-modal {
+      display:none;
+      position:fixed;
+      inset:0;
+      z-index:11000;
+      align-items:center;
+      justify-content:center;
+      padding:1rem;
+    }
+    .video-modal.visible { display:flex; }
+    .video-modal-backdrop { position:absolute; inset:0; background:rgba(20,28,42,0.72); }
+    .video-modal-dialog {
+      position:relative;
+      width:min(900px,100%);
+      max-height:calc(100vh - 2rem);
+      overflow:auto;
+      padding:1rem;
+      border:1px solid var(--blue);
+      border-radius:0.7rem;
+      background:#fff;
+      box-shadow:0 24px 70px rgba(0,0,0,0.28);
+    }
+    .video-modal-header { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:0.8rem; }
+    .video-modal-header h2 { color:var(--ink); font-size:1.15rem; }
+    .video-close-button { padding:0.35rem 0.75rem; border-radius:0.35rem; font-size:1.25rem; }
+    .video-player { display:block; width:100%; max-height:calc(100vh - 7rem); background:#111; }
     @media (max-width:700px) {
       .container { padding:1rem; }
       .hero h1 { font-size:2rem; }
@@ -63,6 +172,8 @@
       .options-grid { grid-template-columns:1fr; }
       .logo-fixed { width:70px; top:16px; left:16px; }
       .intro-logo { width:200px; }
+      .wedding-card::before { inset:8rem 1rem auto auto; width:55vw; height:220px; }
+      .video-modal-dialog { padding:0.75rem; }
     }
   </style>
 </head>
@@ -88,6 +199,19 @@
     <div class="nav-buttons" id="navButtons"></div>
     <footer>Ogni categoria può essere saltata con "Non mi interessa". Alla fine inserisci i tuoi dati per visualizzare il riepilogo.</footer>
   </div>
+</div>
+
+<div id="videoModal" class="video-modal" aria-hidden="true">
+  <div class="video-modal-backdrop" data-close-video></div>
+  <section class="video-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="videoModalTitle">
+    <div class="video-modal-header">
+      <h2 id="videoModalTitle"></h2>
+      <button type="button" class="video-close-button" data-close-video aria-label="Chiudi il video">×</button>
+    </div>
+    <video id="productVideo" class="video-player" controls playsinline preload="none">
+      Il tuo browser non supporta la riproduzione video.
+    </video>
+  </section>
 </div>
 
 <script>
@@ -152,14 +276,14 @@
         { name: "Music planner", price: 500 },
         { name: "Wedding consulting", price: 500 }
       ] },
-    { name: "Special effect e intrattenimento passivo", options: [
-        { name: "Photo booth", price: 700 },
+    { name: "Special effect e intrattenimento passivo", multiple: true, options: [
+        { name: "Photo booth", price: 700, video: "assets/videos/photoboot.mp4" },
         { name: "Foto con totem", price: 500 },
-        { name: "Foto bus", price: 900 },
-        { name: "Pedana rotante", price: 600 },
-        { name: "Smoke boom", price: 600, startingAt: true },
-        { name: "Luci a batteria", price: 200, startingAt: true },
-        { name: "Fontane per torta", price: 400, startingAt: true }
+        { name: "Foto bus", price: 900, video: "assets/videos/photobus.mp4" },
+        { name: "Pedana rotante", price: 600, video: "assets/videos/pedanarotante.mp4" },
+        { name: "Smoke boom", price: 600, startingAt: true, video: "assets/videos/smokebomb.mp4" },
+        { name: "Luci a batteria", price: 200, startingAt: true, video: "assets/videos/luci.mp4" },
+        { name: "Fontane per torta", price: 400, startingAt: true, video: "assets/videos/fontanetorta.mp4" }
       ] }
   ];
   for (let cat of CATEGORIES) cat.options.push({ name: "Non mi interessa / Nessuno di questi", price: 0, perPerson: false });
@@ -254,11 +378,15 @@
       const selectedClass = isSelected ? 'selected' : '';
       const extra = isSelected ? renderOptionExtra(opt, selData.participants) : '';
       optsHtml += `
-        <div class="option-card ${selectedClass}" data-opt-index="${idx}" role="${cat.multiple ? 'checkbox' : 'radio'}" tabindex="0" aria-checked="${isSelected}">
-          <div class="option-name">
+        <div class="option-card ${selectedClass}" data-opt-index="${idx}">
+          <label class="option-choice">
+            <input class="choice-input" type="${cat.multiple ? 'checkbox' : 'radio'}" name="category-${stepIdx}" value="${idx}" ${isSelected ? 'checked' : ''}>
+            <span class="option-name">
             <span>${escapeHtml(opt.name)}</span>
             <span class="option-price">${formatOptionPrice(opt)}</span>
-          </div>
+            </span>
+          </label>
+          ${opt.video ? `<button type="button" class="video-btn" data-video-src="${escapeHtml(opt.video)}" data-video-title="${escapeHtml(opt.name)}">▶ Guarda il video</button>` : ''}
           <div id="extra-${idx}">${extra}</div>
         </div>
       `;
@@ -287,7 +415,8 @@
         const opt = CATEGORIES[currentStep].options[optIndex];
         const isSelected = selections[currentStep].optIndices.includes(optIndex);
         card.classList.toggle('selected', isSelected);
-        card.setAttribute('aria-checked', String(isSelected));
+        const choiceInput = card.querySelector('.choice-input');
+        if (choiceInput) choiceInput.checked = isSelected;
         const extraDiv = card.querySelector(`#extra-${optIndex}`);
         if (extraDiv) extraDiv.innerHTML = isSelected ? renderOptionExtra(opt, selections[currentStep].participants) : '';
 
@@ -347,19 +476,53 @@
     cards.forEach(card => {
       const optIndex = parseInt(card.dataset.optIndex);
       card.addEventListener('click', (e) => {
-        if (e.target.closest('input')) return;
+        if (e.target.closest('input, .option-choice, .video-btn')) return;
         chooseOption(optIndex);
       });
-      card.addEventListener('keydown', (e) => {
-        if (e.target.closest('input')) return;
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          chooseOption(optIndex);
-        }
+      card.querySelector('.choice-input')?.addEventListener('change', () => {
+        chooseOption(optIndex);
+      });
+    });
+    grid.querySelectorAll('.video-btn').forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openProductVideo(button.dataset.videoSrc, button.dataset.videoTitle);
       });
     });
     updateCards();
   }
+
+  let videoReturnFocus = null;
+  function openProductVideo(src, title) {
+    const modal = document.getElementById('videoModal');
+    const video = document.getElementById('productVideo');
+    videoReturnFocus = document.activeElement;
+    document.getElementById('videoModalTitle').innerText = title;
+    video.src = src;
+    video.load();
+    modal.classList.add('visible');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    modal.querySelector('.video-close-button').focus();
+  }
+  function closeProductVideo() {
+    const modal = document.getElementById('videoModal');
+    const video = document.getElementById('productVideo');
+    if (!modal.classList.contains('visible')) return;
+    video.pause();
+    video.removeAttribute('src');
+    video.load();
+    modal.classList.remove('visible');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (videoReturnFocus && typeof videoReturnFocus.focus === 'function') videoReturnFocus.focus();
+  }
+  document.getElementById('videoModal').addEventListener('click', (e) => {
+    if (e.target.matches('[data-close-video]')) closeProductVideo();
+  });
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeProductVideo();
+  });
   function renderNavForCategory() {
     const prevDisabled = (currentStep === 0);
     const nextText = (currentStep === TOTAL - 1) ? "Riepilogo finale" : "Avanti";
